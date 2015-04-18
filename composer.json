@@ -1,0 +1,36 @@
+{
+    "name": "indomian/NewsBlock",
+    "description": "News aggregation application",
+    "keywords": ["news","api"],
+    "homepage": "https://github.com/Indomian/NewsBlock",
+    "type": "project",
+    "license": "",
+    "support": {
+        "issues": "https://github.com/Indomian/NewsBlock/issues",
+        "wiki": "https://github.com/Indomian/NewsBlock/wiki",
+        "source": "https://github.com/Indomian/NewsBlock"
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "*",
+        "yiisoft/yii2-bootstrap": "*",
+        "yiisoft/yii2-swiftmailer": "*",
+        "npm-asset/font-awesome": ">=4.3.0"
+    },
+    "require-dev": {
+        "yiisoft/yii2-codeception": "*",
+        "yiisoft/yii2-debug": "*",
+        "yiisoft/yii2-gii": "*",
+        "yiisoft/yii2-faker": "*"
+    },
+    "config": {
+        "process-timeout": 1800
+    },
+    "extra": {
+        "asset-installer-paths": {
+            "npm-asset-library": "vendor/npm",
+            "bower-asset-library": "vendor/bower"
+        }
+    }
+}
