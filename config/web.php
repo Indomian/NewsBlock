@@ -51,9 +51,9 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'enableStrictParsing' => false,
+            'enableStrictParsing' => true,
             'rules' => [
-                [
+                /*[
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'api\news',
                     'except' => ['delete', 'create', 'update'],
@@ -62,7 +62,25 @@ $config = [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'api\tag',
                     'except' => ['delete', 'create', 'update'],
-                ],
+                    'extraPatterns' => [
+                        'GET,HEAD' => 'all'
+                    ]
+                ],*/
+                //API
+                'GET,HEAD api/news/<id:\d+>' => 'api/tag/view',
+                'GET,HEAD api/news' => 'api/news/index',
+                'api/news/<id>' => 'api/news/options',
+                'api/news' => 'api/news/options',
+                'GET,HEAD api/tag/<id:\d+>' => 'api/tag/view',
+                'GET,HEAD api/tag/all' => 'api/tag/all',
+                'GET,HEAD api/tag' => 'api/tag/index',
+                'api/tag/<id>' => 'api/tag/options',
+                'api/tag' => 'api/tag/options',
+                //Admin
+                'admin/<controller:\w+>/<action:\w+>'=>'admin/<controller>/<action>',
+                //Users
+                '<action:\w+>' => 'site/<action>',
+                '' => 'site/index',
             ],
         ],
         'i18n' => [

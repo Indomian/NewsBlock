@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%news}}".
@@ -19,6 +20,7 @@ use Yii;
  */
 class News extends \yii\db\ActiveRecord
 {
+    const PREVIEW_SIZE=5;
     private $_tags;
     /**
      * @inheritdoc
@@ -37,12 +39,18 @@ class News extends \yii\db\ActiveRecord
             [['date_create'], 'safe'],
             [['content', 'url'], 'string'],
             [['title'], 'string', 'max' => 255],
-            [['tags'], 'string'],
             [['tags'],function($attribute,$params){
-                $arTags=explode(',',$this->$attribute);
-                array_walk($arTags,function(&$value,$index){
-                        $value=trim($value);
-                    });
+                if(is_string($this->$attribute)) {
+                    $arTags=explode(',',$this->$attribute);
+                    array_walk($arTags,function(&$value,$index){
+                            $value=trim($value);
+                        });
+                } elseif(is_array($this->$attribute)) {
+                    $arTags=ArrayHelper::getColumn($this->$attribute,'title');
+                } else {
+                    $this->addError($attribute,Yii::t('app/news','Value is unsupported'));
+                    return;
+                }
                 $count=Tag::find()->where(
                     [
                         'title' => $arTags
@@ -66,6 +74,7 @@ class News extends \yii\db\ActiveRecord
             'date_create' => Yii::t('app/news', 'Date Create'),
             'content' => Yii::t('app/news', 'Content'),
             'url' => Yii::t('app/news', 'Url'),
+            'tags' => Yii::t('app/news', 'Tags'),
         ];
     }
 
@@ -91,7 +100,7 @@ class News extends \yii\db\ActiveRecord
      */
     public function getTagsList($refresh=false) {
         if($refresh || empty($this->_tags)) {
-            $this->_tags=$this->getTags()->asArray();
+            $this->_tags=$this->getTags()->all();
         }
         return $this->_tags;
     }
@@ -120,16 +129,43 @@ class News extends \yii\db\ActiveRecord
     public function init() {
         parent::init();
         $this->on(self::EVENT_AFTER_INSERT,function($changedAttributes){
-                if(in_array('tags',$changedAttributes)) {
-                    foreach($this->_tags as $obTag) {
-                        $this->link('tags',$obTag);
-                    }
-                }
-            });
-        $this->on(self::EVENT_AFTER_UPDATE,function(){
                 foreach($this->_tags as $obTag) {
                     $this->link('tags',$obTag);
                 }
             });
+        $this->on(self::EVENT_AFTER_UPDATE,function(){
+                $arCurrent=$this->getTags()->all();
+                $compareTags=function(Tag $a,Tag $b){
+                    if($a->id==$b->id) {
+                        return 0;
+                    }
+                    return 1;
+                };
+                $arDelete=array_udiff($arCurrent,$this->_tags,$compareTags);
+                foreach($arDelete as $obTag) {
+                    $this->unlink('tags',$obTag,true);
+                }
+                $arNew=array_udiff($this->_tags,$arCurrent,$compareTags);
+                foreach($arNew as $obTag) {
+                    $this->link('tags',$obTag);
+                }
+            });
+    }
+
+    public function fields() {
+        $fields = parent::fields();
+
+        unset($fields['content']);
+
+        $fields['preview'] = function($model) {
+            return $model->content; //TODO Make word striped from start;
+        };
+
+        return $fields;
+    }
+
+    public function extraFields()
+    {
+        return ['tags','content'];
     }
 }

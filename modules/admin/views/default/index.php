@@ -10,7 +10,8 @@ use yii\bootstrap\Nav;
     echo Nav::widget([
             'items' => [
                 ['label' => Yii::t('app/admin','Manage news'), 'url' => ['/admin/news/index']],
-                ['label' => Yii::t('app/admin','Manage tags'), 'url' => ['/admin/tag/index']]
+                ['label' => Yii::t('app/admin','Manage tags'), 'url' => ['/admin/tag/index']],
+                ['label' => Yii::t('app/admin','Manage services'), 'url' => ['/admin/service/index']]
             ]
         ]);
     ?>

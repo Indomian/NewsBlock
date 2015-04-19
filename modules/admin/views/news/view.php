@@ -47,9 +47,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             'pagination' => false
                         ]),
                         'separator' => ', ',
+                        'layout' => '{items}',
+                        'itemOptions' => array(
+                            'tag' => false,
+                        ),
                         'emptyText' => '',
                         'itemView' => function (Tag $model, $key, $index, $widget) {
-                            echo Html::a($model->title, Url::to(['admin/tag/view', 'id' => $model->id]));
+                            return Html::a($model->title, Url::to(['/admin/tag/view', 'id' => $model->id]));
                         }
                     ]
                 ),

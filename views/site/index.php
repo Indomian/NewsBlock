@@ -50,10 +50,14 @@ $this->title = 'News';
                                 'allModels' => $model->tags,
                                 'pagination' => false
                             ]),
+                            'layout' => '{items}',
+                            'itemOptions' => array(
+                                'tag' => false,
+                            ),
                             'separator' => ', ',
                             'emptyText' => '',
                             'itemView' => function (Tag $model, $key, $index, $widget) {
-                                echo Html::a($model->title, Url::to(['site/index', 'tag' => $model->id]));
+                                return Html::a($model->title, Url::to(['site/index', 'tag' => $model->id]));
                             }
                         ]
                     ),
