@@ -1,9 +1,9 @@
 <?php
-namespace app\controllers;
+namespace app\modules\api\controllers;
 
 use yii\rest\ActiveController;
 
-class ApiController extends ActiveController
+class NewsController extends ActiveController
 {
     public $modelClass = 'app\models\News';
 }

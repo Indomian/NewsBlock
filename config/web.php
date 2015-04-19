@@ -10,6 +10,9 @@ $config = [
         'admin' => [
             'class' => 'app\modules\admin\Module',
         ],
+        'api' => [
+            'class' => 'app\modules\api\Module',
+        ],
     ],
     'components' => [
         'request' => [
@@ -50,7 +53,16 @@ $config = [
             'showScriptName' => false,
             'enableStrictParsing' => false,
             'rules' => [
-                ['class' => 'yii\rest\UrlRule', 'controller' => 'api'],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api\news',
+                    'except' => ['delete', 'create', 'update'],
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api\tag',
+                    'except' => ['delete', 'create', 'update'],
+                ],
             ],
         ],
         'i18n' => [
