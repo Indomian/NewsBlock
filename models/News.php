@@ -13,6 +13,7 @@ use yii\helpers\ArrayHelper;
  * @property string $date_create
  * @property string $content
  * @property string $url
+ * @property string $hash
  *
  * @property News2tags[] $news2tags
  * @property Tag[] $tags
@@ -59,7 +60,8 @@ class News extends \yii\db\ActiveRecord
                 if($count!=count($arTags)) {
                     $this->addError($attribute,Yii::t('app/news','Some tags mismatch available list'));
                 }
-            }]
+            }],
+            [['hash'],'unique']
         ];
     }
 
@@ -75,6 +77,7 @@ class News extends \yii\db\ActiveRecord
             'content' => Yii::t('app/news', 'Content'),
             'url' => Yii::t('app/news', 'Url'),
             'tags' => Yii::t('app/news', 'Tags'),
+            'hash' => Yii::t('app/news', 'Hash'),
         ];
     }
 
@@ -128,7 +131,10 @@ class News extends \yii\db\ActiveRecord
 
     public function init() {
         parent::init();
-        $this->on(self::EVENT_AFTER_INSERT,function($changedAttributes){
+        $this->on(self::EVENT_BEFORE_VALIDATE,function(){
+                $this->hash=$this->makeHash();
+            });
+        $this->on(self::EVENT_AFTER_INSERT,function(){
                 foreach($this->_tags as $obTag) {
                     $this->link('tags',$obTag);
                 }
@@ -150,6 +156,10 @@ class News extends \yii\db\ActiveRecord
                     $this->link('tags',$obTag);
                 }
             });
+    }
+
+    public function makeHash() {
+        return sha1($this->title.'|'.$this->content);
     }
 
     public function fields() {

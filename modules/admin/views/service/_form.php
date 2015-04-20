@@ -16,6 +16,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'processor')->textInput(['maxlength' => 255]) ?>
 
+    <?= $form->field($model, 'item_class')->textInput(['maxlength' => 255]) ?>
+
     <?= $form->field($model, 'url')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'last_call')->textInput() ?>

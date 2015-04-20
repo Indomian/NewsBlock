@@ -18,7 +18,8 @@
         "yiisoft/yii2-swiftmailer": "*",
         "npm-asset/font-awesome": ">=4.3.0",
         "npm-asset/typeahead.js": ">=0.10.5",
-        "npm-asset/bootstrap-tagsinput": ">=0.4.2"
+        "npm-asset/bootstrap-tagsinput": ">=0.4.2",
+        "curl/curl": "1.2.1"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

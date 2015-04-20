@@ -25,6 +25,13 @@ return [
                 ],
             ],
         ],
+        'i18n' => [
+            'translations' => [
+                'app*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                ],
+            ],
+        ],
         'db' => $db,
     ],
     'params' => $params,

@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'title',
             'processor',
+            'item_class',
             'url:ntext',
             'last_call',
         ],
