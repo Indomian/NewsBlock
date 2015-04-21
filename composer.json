@@ -1,5 +1,5 @@
 {
-    "name": "indomian/NewsBlock",
+    "name": "indomian/news-block",
     "description": "News aggregation application",
     "keywords": ["news","api"],
     "homepage": "https://github.com/Indomian/NewsBlock",
