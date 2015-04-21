@@ -2,6 +2,7 @@
 namespace app\components\parser;
 
 use Curl\Curl;
+use yii\helpers\FileHelper;
 
 trait ParserDownload {
 
@@ -26,10 +27,17 @@ trait ParserDownload {
                     $charset=strtolower($matches[1]);
                 }
             }
+            $currentCharset=$charset;
             if($currentCharset!=$charset) {
                 $result=iconv($charset,$currentCharset,$obRequest->response);
             } else {
                 $result=$obRequest->response;
+            }
+            if(defined('YII_DEBUG') && YII_DEBUG) {
+                file_put_contents(\Yii::getAlias('@runtime')
+                    .DIRECTORY_SEPARATOR.'logs'
+                    .DIRECTORY_SEPARATOR.md5($this->url).
+                    '_'.date('Y-m-d H:i:s').'.xml',$result);
             }
             return $result;
         }

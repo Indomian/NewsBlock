@@ -3,7 +3,7 @@ namespace app\components\parser\service;
 
 use yii\helpers\HtmlPurifier;
 use app\components\parser\ParserService;
-use app\components\ItemFoundEvent;
+use app\components\events\ItemFoundEvent;
 use HTMLPurifier_Config;
 
 class Say7ParserService extends ParserService {

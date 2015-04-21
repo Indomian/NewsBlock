@@ -1,11 +1,11 @@
 <?php
 namespace app\commands;
 
-use app\components\ItemFoundEvent;
+use app\components\events\ItemFoundEvent;
 use app\models\Tag;
 use yii\console\Controller;
 use app\models\Service;
-use app\components\ParserService;
+use app\components\parser\ParserService;
 use yii\helpers\ArrayHelper;
 
 /**

@@ -2,6 +2,7 @@
 namespace app\components\parser\service;
 
 use app\components\parser\ParserService;
+use app\components\events\ItemFoundEvent;
 
 class RSSParserService extends ParserService {
 
@@ -12,7 +13,6 @@ class RSSParserService extends ParserService {
             return false;
         }
         $obXml=simplexml_load_string($xml);
-        $itemClass=$this->parserItemClass;
         foreach($obXml->xpath('//item') as $obItem) {
             $obParserItem=$this->getItemObject();
             if($obParserItem->load($obItem)) {

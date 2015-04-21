@@ -1,8 +1,8 @@
 <?php
-namespace app\components;
+namespace app\components\events;
 
-use cebe\markdown\Parser;
 use yii\base\Event;
+use app\components\parser\ParserItem;
 
 class ItemFoundEvent extends Event {
     /**
