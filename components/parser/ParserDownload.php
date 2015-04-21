@@ -32,12 +32,12 @@ trait ParserDownload {
             } else {
                 $result=$obRequest->response;
             }
-            if(defined('YII_DEBUG') && YII_DEBUG) {
+            /*if(defined('YII_DEBUG') && YII_DEBUG) {
                 file_put_contents(\Yii::getAlias('@runtime')
                     .DIRECTORY_SEPARATOR.'logs'
                     .DIRECTORY_SEPARATOR.md5($this->url).
                     '_'.date('Y-m-d H:i:s').'.xml',$result);
-            }
+            }*/
             return $result;
         }
     }
