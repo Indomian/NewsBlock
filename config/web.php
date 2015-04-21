@@ -67,7 +67,7 @@ $config = [
                     ]
                 ],*/
                 //API
-                'GET,HEAD api/news/<id:\d+>' => 'api/tag/view',
+                'GET,HEAD api/news/<id:\d+>' => 'api/news/view',
                 'GET,HEAD api/news' => 'api/news/index',
                 'api/news/<id>' => 'api/news/options',
                 'api/news' => 'api/news/options',

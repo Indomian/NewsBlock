@@ -37,7 +37,7 @@ $this->title = 'News';
                 );
                 echo Html::tag(
                     'div',
-                    $model->content,
+                    nl2br(Html::encode($model->content)),
                     [
                         'class' => 'panel-body'
                     ]

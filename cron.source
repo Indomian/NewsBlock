@@ -1,0 +1,3 @@
+SHELL=/bin/bash
+MAILTO=mail@to
+*/15 * * * * /path/to/site/yii parser

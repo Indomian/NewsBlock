@@ -27,7 +27,6 @@ trait ParserDownload {
                     $charset=strtolower($matches[1]);
                 }
             }
-            $currentCharset=$charset;
             if($currentCharset!=$charset) {
                 $result=iconv($charset,$currentCharset,$obRequest->response);
             } else {
