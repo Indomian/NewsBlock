@@ -90,7 +90,8 @@ class Tag extends \yii\db\ActiveRecord implements Linkable
     {
         return [
             Link::REL_SELF => Url::to(['/api/tag/view', 'id' => $this->id], true),
-            'news' => Url::to(['/site/index', 'tag' => $this->id],true)
+            'news' => Url::to(['/site/index', 'tag' => $this->id],true),
+            'apiNews' => Url::to(['/api/news/index', 'tag' => $this->id],true),
         ];
     }
 }

@@ -7,7 +7,10 @@ use app\models\Tag;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-/* @var $this yii\web\View */
+/**
+ * @var $this yii\web\View
+ * @var $data ActiveDataProvider
+ */
 
 $this->title = 'News';
 ?>
@@ -15,12 +18,7 @@ $this->title = 'News';
     <?php
     echo ListView::widget(
         [
-            'dataProvider' => new ActiveDataProvider([
-                'query' => News::find()->with('tags'),
-                'pagination' => [
-                    'pageSize' => 20
-                ]
-            ]),
+            'dataProvider' => $data,
             'itemView' => function (News $model, $key, $index, $widget) {
                 echo Html::beginTag(
                     'div',

@@ -29,9 +29,13 @@ trait ParserDownload {
             }
             if($currentCharset!=$charset) {
                 $result=iconv($charset,$currentCharset,$obRequest->response);
+                if(preg_match('#<\?xml version="1\.0" encoding="(.*)"\?>#m',$result,$matches)) {
+                    $result=str_replace($matches[0],'<?xml version="1.0" encoding="utf-8"?>',$result);
+                }
             } else {
                 $result=$obRequest->response;
             }
+
             /*if(defined('YII_DEBUG') && YII_DEBUG) {
                 file_put_contents(\Yii::getAlias('@runtime')
                     .DIRECTORY_SEPARATOR.'logs'

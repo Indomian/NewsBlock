@@ -18,6 +18,8 @@ use yii\base\InvalidValueException;
  */
 class Service extends \yii\db\ActiveRecord
 {
+    use TagsTrait;
+
     public $parsers=[
         'RSS' => 'app\components\parser\service\RSSParserService',
         'Say7' => 'app\components\parser\service\Say7ParserService'
@@ -40,6 +42,7 @@ class Service extends \yii\db\ActiveRecord
             [['url'], 'string'],
             [['last_call'], 'safe'],
             [['title', 'processor'], 'string', 'max' => 255],
+            [['tags'],'validateTags'],
             [['item_class'],function($attribute,$name){
                 if(!class_exists($this->$attribute)) {
                     $this->addError($attribute,Yii::t('app/service','Item class should be existing class'));
@@ -65,12 +68,13 @@ class Service extends \yii\db\ActiveRecord
             'processor' => Yii::t('app/service', 'Processor'),
             'url' => Yii::t('app/service', 'Url'),
             'last_call' => Yii::t('app/service', 'Last Call'),
+            'tags' => Yii::t('app/service', 'Tags'),
             'item_class' => Yii::t('app/service', 'Item class'),
         ];
     }
 
     /**
-     * @return \app\components\ParserService
+     * @return \app\components\parser\ParserService
      * @throws \yii\base\InvalidValueException
      */
     public function getParser() {
@@ -80,8 +84,30 @@ class Service extends \yii\db\ActiveRecord
             $obClass->url=$this->url;
             $obClass->parserItemClass=$this->item_class;
             $obClass->lastRequest=$this->last_call;
+            $obClass->tags=$this->getTags()->all();
             return $obClass;
         }
         throw new InvalidValueException('Processor not supported');
+    }
+
+    public function init() {
+        parent::init();
+        $this->initTagsEvents();
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getService2tag()
+    {
+        return $this->hasMany(Service2tag::className(), ['service_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTags()
+    {
+        return $this->hasMany(Tag::className(), ['id' => 'tag_id'])->viaTable('{{%service2tag}}', ['service_id' => 'id']);
     }
 }

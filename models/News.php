@@ -24,8 +24,12 @@ use yii\web\Linkable;
  */
 class News extends \yii\db\ActiveRecord implements Linkable
 {
+    const SCENARIO_REST_FULL=1;
+
+    use TagsTrait;
+
     const PREVIEW_SIZE=5;
-    private $_tags;
+
     /**
      * @inheritdoc
      */
@@ -43,27 +47,7 @@ class News extends \yii\db\ActiveRecord implements Linkable
             [['date_create'], 'safe'],
             [['content', 'url'], 'string'],
             [['title'], 'string', 'max' => 255],
-            [['tags'],function($attribute,$params){
-                if(is_string($this->$attribute)) {
-                    $arTags=explode(',',$this->$attribute);
-                    array_walk($arTags,function(&$value,$index){
-                            $value=trim($value);
-                        });
-                } elseif(is_array($this->$attribute)) {
-                    $arTags=ArrayHelper::getColumn($this->$attribute,'title');
-                } else {
-                    $this->addError($attribute,Yii::t('app/news','Value is unsupported'));
-                    return;
-                }
-                $count=Tag::find()->where(
-                    [
-                        'title' => $arTags
-                    ]
-                )->count();
-                if($count!=count($arTags)) {
-                    $this->addError($attribute,Yii::t('app/news','Some tags mismatch available list'));
-                }
-            }],
+            [['tags'],'validateTags'],
             [['hash'],'unique']
         ];
     }
@@ -100,64 +84,11 @@ class News extends \yii\db\ActiveRecord implements Linkable
         return $this->hasMany(Tag::className(), ['id' => 'tag_id'])->viaTable('{{%news2tags}}', ['news_id' => 'id']);
     }
 
-    /**
-     * @param bool $refresh
-     * @return Tag[]
-     */
-    public function getTagsList($refresh=false) {
-        if($refresh || empty($this->_tags)) {
-            $this->_tags=$this->getTags()->all();
-        }
-        return $this->_tags;
-    }
-
-    /**
-     * @param $value
-     */
-    public function setTags($value) {
-        if(is_array($value)) {
-            $this->_tags=$value;
-            $this->markAttributeDirty('tags');
-        } elseif(is_string($value)) {
-            $arTags=explode(',',$value);
-            array_walk($arTags,function(&$value,$index){
-                    $value=trim($value);
-                });
-            $this->_tags=Tag::find()->where(
-                [
-                    'title' => $arTags
-                ]
-            )->all();
-            $this->markAttributeDirty('tags');
-        }
-    }
-
     public function init() {
         parent::init();
+        $this->initTagsEvents();
         $this->on(self::EVENT_BEFORE_VALIDATE,function(){
                 $this->hash=$this->makeHash();
-            });
-        $this->on(self::EVENT_AFTER_INSERT,function(){
-                foreach($this->_tags as $obTag) {
-                    $this->link('tags',$obTag);
-                }
-            });
-        $this->on(self::EVENT_AFTER_UPDATE,function(){
-                $arCurrent=$this->getTags()->all();
-                $compareTags=function(Tag $a,Tag $b){
-                    if($a->id==$b->id) {
-                        return 0;
-                    }
-                    return 1;
-                };
-                $arDelete=array_udiff($arCurrent,$this->_tags,$compareTags);
-                foreach($arDelete as $obTag) {
-                    $this->unlink('tags',$obTag,true);
-                }
-                $arNew=array_udiff($this->_tags,$arCurrent,$compareTags);
-                foreach($arNew as $obTag) {
-                    $this->link('tags',$obTag);
-                }
             });
     }
 
@@ -167,11 +98,18 @@ class News extends \yii\db\ActiveRecord implements Linkable
 
     public function fields() {
         $fields = parent::fields();
+        if($this->scenario==self::SCENARIO_REST_FULL) {
+            $fields[]='tags';
+            return $fields;
+        }
 
         unset($fields['content']);
 
         $fields['preview'] = function($model) {
-            return $model->content; //TODO Make word striped from start;
+            if(preg_match('#^((.*\s){10})#mu',$model->content,$matches)) {
+                return trim($matches[1]);
+            }
+            return $model->content;
         };
 
         return $fields;
@@ -208,7 +146,7 @@ class News extends \yii\db\ActiveRecord implements Linkable
     public function getLinks()
     {
         return [
-            Link::REL_SELF => Url::to(['/api/tag/view', 'id' => $this->id], true),
+            Link::REL_SELF => Url::to(['/api/news/view', 'id' => $this->id], true),
         ];
     }
 }

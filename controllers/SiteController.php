@@ -2,12 +2,15 @@
 
 namespace app\controllers;
 
+use app\models\Tag;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use yii\data\ActiveDataProvider;
+use app\models\News;
 
 class SiteController extends Controller
 {
@@ -50,9 +53,19 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionIndex()
+    public function actionIndex($tag='')
     {
-        return $this->render('index');
+        $query=News::find()->joinWith('tags');
+        if(!empty($tag) && $obTag=Tag::findOne(intval($tag))) {
+            $query->andWhere('News2tags.tag_id='.$obTag->id);
+        }
+        $data=new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 20
+            ]
+        ]);
+        return $this->render('index',['data'=>$data]);
     }
 
     public function actionLogout()

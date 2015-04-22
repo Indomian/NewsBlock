@@ -21,20 +21,26 @@ class ParserController extends Controller
      */
     private function _run(Service $obService) {
         $obParser=$obService->getParser();
-        $obParser->on('itemFound',function(ItemFoundEvent $event){
-                $arTags=array();
-                foreach($event->data['tags'] as $obTag) {
-                    if(mb_stripos ($event->parserItem->title.' '.$event->parserItem->content,$obTag->title,0,'utf-8')!==false) {
-                        $arTags[]=$obTag;
+        if($obService->getTags()->count()==0) {
+            $obParser->on('itemFound',function(ItemFoundEvent $event){
+                    $arTags=array();
+                    foreach($event->data['tags'] as $obTag) {
+                        if(mb_stripos ($event->parserItem->title.' '.$event->parserItem->content,$obTag->title,0,'utf-8')!==false) {
+                            $arTags[]=$obTag;
+                        }
                     }
-                }
-                if(!empty($arTags)) {
-                    $event->parserItem->setTags($arTags);
+                    if(!empty($arTags)) {
+                        $event->parserItem->setTags($arTags);
+                        $event->parserItem->save();
+                    }
+                },[
+                    'tags'=>Tag::find()->all()
+                ]);
+        } else {
+            $obParser->on('itemFound',function(ItemFoundEvent $event){
                     $event->parserItem->save();
-                }
-            },[
-                'tags'=>Tag::find()->all()
-            ]);
+                });
+        }
         if($obParser->process()) {
             $obService->last_call=date('Y-m-d H:i:s');
             $obService->save();

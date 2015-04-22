@@ -10,13 +10,18 @@ abstract class ParserService extends Component {
     public $url;
     public $lastRequest=null;
     public $parserItemClass='app\components\ParserItem';
+    public $tags=array();
 
     /**
      * @return ParserItem
      */
     protected function getItemObject() {
         $itemClass=$this->parserItemClass;
-        return new $itemClass();
+        $obItem=new $itemClass();
+        if(!empty($this->tags)) {
+            $obItem->setTags($this->tags);
+        }
+        return $obItem;
     }
 
     abstract public function process();

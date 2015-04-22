@@ -2,6 +2,10 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\widgets\ListView;
+use yii\data\ArrayDataProvider;
+use app\models\Tag;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Service */
@@ -34,6 +38,27 @@ $this->params['breadcrumbs'][] = $this->title;
             'item_class',
             'url:ntext',
             'last_call',
+            'tags'=>array(
+                'attribute' => 'tags',
+                'format' => 'html',
+                'value' => ListView::widget(
+                    [
+                        'dataProvider' => new ArrayDataProvider([
+                            'allModels' => $model->tags,
+                            'pagination' => false
+                        ]),
+                        'separator' => ', ',
+                        'layout' => '{items}',
+                        'itemOptions' => array(
+                            'tag' => false,
+                        ),
+                        'emptyText' => '',
+                        'itemView' => function (Tag $model, $key, $index, $widget) {
+                            return Html::a($model->title, Url::to(['/admin/tag/view', 'id' => $model->id]));
+                        }
+                    ]
+                ),
+            )
         ],
     ]) ?>
 
